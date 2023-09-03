@@ -31,7 +31,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STR
 # ---- Project ----
 
 project(
-	TemplatePluginSSE
+	ConditionalShouts
 	VERSION 1.0.0
 	LANGUAGES CXX
 )
@@ -201,4 +201,9 @@ target_precompile_headers(
 	${PROJECT_NAME}
 	PRIVATE
 		src/PCH.h
+)
+
+add_custom_command(
+	TARGET ${PROJECT_NAME} POST_BUILD
+	COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${PROJECT_NAME}> "e:/MO2_Data/mods/xTESEdit64_OUT/skse/plugins/"
 )
