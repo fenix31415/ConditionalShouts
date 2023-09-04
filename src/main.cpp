@@ -45,7 +45,8 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 	return true;
 }
 
-bool is_ok([[maybe_unused]] RE::TESShout* shout) {
+bool is_ok([[maybe_unused]] RE::TESShout* shout, [[maybe_unused]] RE::TESWordOfPower* word)
+{
 	auto player = RE::PlayerCharacter::GetSingleton();
 	return player->HasPerk(RE::TESForm::LookupByID<RE::BGSPerk>(0x018E6B));
 }
@@ -106,7 +107,21 @@ private:
 								} while (i);
 
 								if (v13 && RE::PlayerCharacter::GetSingleton()->GetActorValue(RE::ActorValue::kDragonSouls) > 0) {
-									if (!is_ok(shout)) {
+									RE::TESWordOfPower* word;
+									uint32_t v5 = 0;
+									int v6 = 0;
+									for (auto variation = &shout->variations[0];; ++variation) {
+										word = variation->word;
+										if (word->GetKnown()) {
+											if ((word->formFlags & 0x10000) == 0)
+												break;
+										}
+										++v5;
+										if (++v6 > first_unknown_word)
+											return _ProcessMessage(menu, a_message);
+									}
+
+									if (word && !is_ok(shout, word)) {
 										FenixUtils::notification("Lox.");
 										return RE::UI_MESSAGE_RESULTS::kHandled;
 									}
